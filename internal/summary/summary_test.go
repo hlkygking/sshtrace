@@ -76,3 +76,19 @@ func TestGenerateDurationStats(t *testing.T) {
 		t.Errorf("expected avg 20s, got %v", r.AvgDuration)
 	}
 }
+
+func TestGenerateSingleSession(t *testing.T) {
+	sessions := []*session.Session{
+		makeSession("alice", "1.1.1.1", 3, 15*time.Second),
+	}
+	r := summary.Generate(sessions)
+	if r.LongestSession != 15*time.Second {
+		t.Errorf("expected longest 15s, got %v", r.LongestSession)
+	}
+	if r.ShortestSession != 15*time.Second {
+		t.Errorf("expected shortest 15s, got %v", r.ShortestSession)
+	}
+	if r.AvgDuration != 15*time.Second {
+		t.Errorf("expected avg 15s, got %v", r.AvgDuration)
+	}
+}
