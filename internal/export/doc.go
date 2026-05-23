@@ -12,4 +12,13 @@
 //	if err := ex.Export(sess); err != nil {
 //	    log.Fatal(err)
 //	}
+//
+// To export multiple sessions in sequence, call Export for each session:
+//
+//	ex := export.New(os.Stdout, export.FormatJSON)
+//	for _, sess := range sessions {
+//	    if err := ex.Export(sess); err != nil {
+//	        log.Fatal(err)
+//	    }
+//	}
 package export
