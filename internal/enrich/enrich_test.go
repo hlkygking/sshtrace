@@ -22,6 +22,20 @@ func addEvent(s *session.Session, typ, data string) {
 	})
 }
 
+// assertMeta is a helper that checks whether a specific meta key on the first
+// event of the session matches the expected value.
+func assertMeta(t *testing.T, s *session.Session, key, want string) {
+	t.Helper()
+	got, ok := s.Events[0].Meta[key]
+	if !ok {
+		t.Errorf("expected meta key %q to be present", key)
+		return
+	}
+	if got != want {
+		t.Errorf("meta[%q]: expected %q, got %q", key, want, got)
+	}
+}
+
 func TestApplyNilSessionReturnsError(t *testing.T) {
 	e := enrich.New()
 	_, err := e.Apply(nil)
@@ -51,10 +65,7 @@ func TestCommandClassificationPrivilegeEscalation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	got := out.Events[0].Meta["category"]
-	if got != "privilege-escalation" {
-		t.Errorf("expected privilege-escalation, got %q", got)
-	}
+	assertMeta(t, out, "category", "privilege-escalation")
 }
 
 func TestCommandClassificationNetworkFetch(t *testing.T) {
@@ -63,9 +74,7 @@ func TestCommandClassificationNetworkFetch(t *testing.T) {
 
 	e := enrich.New(enrich.WithCommandClassification())
 	out, _ := e.Apply(s)
-	if got := out.Events[0].Meta["category"]; got != "network-fetch" {
-		t.Errorf("expected network-fetch, got %q", got)
-	}
+	assertMeta(t, out, "category", "network-fetch")
 }
 
 func TestCommandClassificationGeneral(t *testing.T) {
@@ -74,9 +83,7 @@ func TestCommandClassificationGeneral(t *testing.T) {
 
 	e := enrich.New(enrich.WithCommandClassification())
 	out, _ := e.Apply(s)
-	if got := out.Events[0].Meta["category"]; got != "general" {
-		t.Errorf("expected general, got %q", got)
-	}
+	assertMeta(t, out, "category", "general")
 }
 
 func TestOutputEventsAreNotClassified(t *testing.T) {
