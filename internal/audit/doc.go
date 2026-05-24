@@ -12,8 +12,20 @@
 //   - EventCommandRun      – emitted when a command is captured
 //   - EventAlertTriggered  – emitted when an alert rule fires
 //
+// Usage:
+//
+// Create a logger by passing any io.Writer to audit.New. For production use,
+// consider wrapping the writer with a mutex or using a buffered writer to
+// avoid contention under high session concurrency.
+//
 // Example:
 //
 //	logger := audit.New(os.Stdout)
 //	logger.LogSession(sess, audit.EventSessionStarted)
+//
+//	// Log a captured command with detail:
+//	logger.LogCommand(sess, "/bin/bash -c 'ls -la'")
+//
+//	// Log an alert firing:
+//	logger.LogAlert(sess, "keyword match: 'passwd'")
 package audit
