@@ -90,3 +90,17 @@ func TestDifferentSaltsProduceDifferentPseudonyms(t *testing.T) {
 		t.Error("different salts should produce different pseudonyms")
 	}
 }
+
+func TestApplyPreservesStartedAt(t *testing.T) {
+	a, _ := New("salt")
+	now := time.Now()
+	s := makeSession("eve", "10.0.0.2")
+	s.StartedAt = now
+	out, err := a.Apply(s)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !out.StartedAt.Equal(now) {
+		t.Errorf("expected StartedAt to be preserved, got %v want %v", out.StartedAt, now)
+	}
+}
