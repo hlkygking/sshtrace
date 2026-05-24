@@ -19,6 +19,16 @@ type Report struct {
 	ShortestSession time.Duration `json:"shortest_session_ns"`
 }
 
+// UniqueUserCount returns the number of distinct users in the report.
+func (r Report) UniqueUserCount() int {
+	return len(r.UniqueUsers)
+}
+
+// UniqueIPCount returns the number of distinct client IPs in the report.
+func (r Report) UniqueIPCount() int {
+	return len(r.UniqueIPs)
+}
+
 // Generate builds a Report from the provided list of sessions.
 func Generate(sessions []*session.Session) Report {
 	if len(sessions) == 0 {
