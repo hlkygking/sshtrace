@@ -86,6 +86,15 @@ func (e *Enforcer) Sessions(user string) int {
 	return e.getOrCreate(user).sessions
 }
 
+// ResetUser clears the recorded usage for the given user, allowing them to
+// start fresh against their quota limits. This is useful when a user account
+// is renewed or during testing.
+func (e *Enforcer) ResetUser(user string) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	delete(e.usage, user)
+}
+
 func (e *Enforcer) getOrCreate(user string) *usage {
 	if _, ok := e.usage[user]; !ok {
 		e.usage[user] = &usage{}
