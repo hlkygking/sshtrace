@@ -104,3 +104,19 @@ func TestApplyPreservesStartedAt(t *testing.T) {
 		t.Errorf("expected StartedAt to be preserved, got %v want %v", out.StartedAt, now)
 	}
 }
+
+// TestSameSaltDifferentUsersProduceDifferentPseudonyms ensures that two
+// distinct users anonymised with the same salt do not collide.
+func TestSameSaltDifferentUsersProduceDifferentPseudonyms(t *testing.T) {
+	a, _ := New("shared-salt")
+	s1 := makeSession("frank", "10.0.0.3")
+	s2 := makeSession("grace", "10.0.0.4")
+	out1, _ := a.Apply(s1)
+	out2, _ := a.Apply(s2)
+	if out1.User == out2.User {
+		t.Errorf("expected different pseudonyms for different users, both got %q", out1.User)
+	}
+	if out1.RemoteIP == out2.RemoteIP {
+		t.Errorf("expected different IP pseudonyms for different IPs, both got %q", out1.RemoteIP)
+	}
+}
