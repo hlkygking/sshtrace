@@ -91,3 +91,16 @@ func TestNewCreatesDir(t *testing.T) {
 		t.Error("expected directory to be created")
 	}
 }
+
+func TestLoadNonexistentFile(t *testing.T) {
+	dir := t.TempDir()
+	store, err := storage.New(dir)
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+
+	_, err = store.Load(filepath.Join(dir, "does-not-exist.json"))
+	if err == nil {
+		t.Error("expected error when loading nonexistent file, got nil")
+	}
+}
